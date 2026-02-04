@@ -1,0 +1,33 @@
+{
+  "name": "gmail-sender-mcp-server",
+  "version": "1.0.2",
+  "description": "MCP server for sending emails and creating drafts via Gmail API",
+  "main": "src/index.js",
+  "type": "module",
+  "bin": {
+    "gmail-sender-mcp-server": "src/index.js"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "keywords": ["mcp", "gmail", "email", "api", "model-context-protocol"],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "googleapis": "^144.0.0",
+    "express": "^4.21.2",
+    "nodemailer": "^6.9.16"
+  }
+}

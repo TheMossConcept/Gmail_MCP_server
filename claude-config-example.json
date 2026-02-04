@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "gmail-sender": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["/Users/niklasmoss/Documents/code/admin_work/Gmail_MCP_server/src/index.js"],
+      "env": {
+        "GMAIL_CLIENT_ID": "YOUR_CLIENT_ID_HERE",
+        "GMAIL_CLIENT_SECRET": "YOUR_CLIENT_SECRET_HERE"
+      }
+    }
+  }
+}
