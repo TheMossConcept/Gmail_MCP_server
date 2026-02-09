@@ -1,6 +1,6 @@
 {
   "name": "gmail-sender-mcp-server",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "MCP server for sending emails and creating drafts via Gmail API",
   "main": "src/index.js",
   "type": "module",

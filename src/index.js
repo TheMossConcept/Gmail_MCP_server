@@ -54,6 +54,8 @@ async function saveCredentials(tokens) {
 }
 
 // Start Express server for OAuth callback
+let httpServer = null;
+
 function startOAuthServer() {
   const app = express();
 
@@ -77,7 +79,7 @@ function startOAuthServer() {
     }
   });
 
-  app.listen(PORT, () => {
+  httpServer = app.listen(PORT, () => {
     console.error(`OAuth server listening on http://localhost:${PORT}`);
     console.error(`To authenticate, visit: http://localhost:${PORT}/auth`);
   });
@@ -351,6 +353,43 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
 });
 
+// Graceful shutdown
+let isShuttingDown = false;
+
+async function shutdown() {
+  if (isShuttingDown) return;
+  isShuttingDown = true;
+  console.error('Shutting down Gmail MCP server...');
+
+  // Close the MCP server connection
+  try {
+    await server.close();
+    console.error('MCP server closed.');
+  } catch (err) {
+    console.error('Error closing MCP server:', err.message);
+  }
+
+  // Close the Express HTTP server (release port 3500)
+  if (httpServer) {
+    await new Promise((resolve) => {
+      httpServer.close((err) => {
+        if (err) {
+          console.error('Error closing HTTP server:', err.message);
+        } else {
+          console.error('HTTP server closed (port 3500 released).');
+        }
+        resolve();
+      });
+    });
+  }
+
+  process.exit(0);
+}
+
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
+process.on('SIGHUP', shutdown);
+
 // Start the OAuth server
 startOAuthServer();
 
@@ -361,6 +400,12 @@ async function main() {
   await server.connect(transport);
   console.error('Gmail Sender MCP server running on stdio');
   console.error(`Token storage: ${TOKEN_PATH}`);
+
+  // If the transport closes (e.g. parent process disconnects), shut down
+  transport.onclose = () => {
+    console.error('Transport closed.');
+    shutdown();
+  };
 }
 
 main().catch(console.error);
